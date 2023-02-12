@@ -30,6 +30,31 @@ def blankify(word):
 
     return blankWord
 
+def getGuess():
+    while True:
+        guess = input('Guess a letter: ')
+
+        if len(guess) > 1 or len(guess) < 1:
+            pLine('Must be exactly one character!', 0.05)
+            continue
+        try:
+            if int(guess):
+                pLine('Guess cannot be a number!', 0.05)
+                continue
+        except ValueError:
+            pass
+
+        break
+    
+    return guess
+
+def checkGuess(guess, word):
+    if guess in word:
+        return True
+
+    else:
+        return False
+
 # Clear screen
 system('cls')
 
@@ -71,3 +96,10 @@ sleep(1)
 word = choice(words)
 
 pLine(blankify(word))
+
+# Ask user for guesses
+while True:
+    guess = getGuess()
+    
+    if checkGuess(guess, word):
+        pass
