@@ -20,6 +20,16 @@ def pLine(text, waitTime = 0.07, newLine = True):
     if newLine:
         print('')
 
+def blankify(word):
+    wordList = list(word)
+
+    for i in range(len(wordList)):
+        wordList[i] = '_ '
+
+    blankWord = ''.join(wordList)
+
+    return blankWord
+
 # Clear screen
 system('cls')
 
@@ -46,10 +56,18 @@ while True:
     if userChoice > 2 or userChoice < 1:
         pLine('That is not a valid option!', 0.05)
         continue
+    elif userChoice == 2 and wins < 3:
+        pLine('You do not have enough wins to add a word to the pool!', 0.05)
+        continue
+
     break
 
 # Setup game
-
+pLine('Commencing game...', 0.1)
+system('cls')
+sleep(1)
 
 # Get a new word
 word = choice(words)
+
+pLine(blankify(word))
