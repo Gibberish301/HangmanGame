@@ -55,6 +55,16 @@ def checkGuess(guess, word):
     else:
         return False
 
+def guessInWord(guess, word):
+    wordList = list(word)
+    indexes = []
+
+    for i, v in enumerate(wordList):
+        if v == guess:
+            indexes.append(i)
+
+    return indexes
+
 # Clear screen
 system('cls')
 
@@ -94,6 +104,7 @@ sleep(1)
 
 # Get a new word
 word = choice(words)
+word = 'hello'
 
 pLine(blankify(word))
 
@@ -102,4 +113,5 @@ while True:
     guess = getGuess()
     
     if checkGuess(guess, word):
-        pass
+        pLine('That letter is in the word!')
+        print(guessInWord(guess, word))
