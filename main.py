@@ -24,22 +24,9 @@ def pLine(text, waitTime = 0.03, newLine = True):
 
 def blankify(word, guess = ''):
     wordList = list(word)
-    indexes = guessInWord(guess, word)
-    try:
-        index = indexes[0]
-    except IndexError:
-        indexes = [0]
-        index = 0
 
     for i in range(len(wordList)):
-        try:
-            if guess == wordList[index]:
-                wordList[i] == f'{wordList[i]} '
-                index += 1
-            else:
-                wordList[i] = '_ '
-        except IndexError:
-            wordList = '_ '
+        wordList[i]
 
     blankWord = ''.join(wordList)
 
@@ -74,16 +61,6 @@ def checkGuess(guess, word, guessed):
         return 1
     else:
         return 2
-
-def guessInWord(guess, word):
-    wordList = list(word)
-    indexes = []
-
-    for i, v in enumerate(wordList):
-        if v == guess:
-            indexes.append(i)
-
-    return indexes
 
 # Clear screen
 system('cls')
@@ -136,6 +113,7 @@ while True:
     pLine(f'You have {tries} tries left')
     print('')
 
+    print(blankify(word))
     pLine(visibleWord)
     print('')
 
@@ -162,4 +140,4 @@ while True:
 
     system('cls')
 
-    visibleWord = blankify(visibleWord, guess)
+    
