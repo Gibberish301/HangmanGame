@@ -4,8 +4,10 @@ from random import choice
 
 # Setup wins variable to keep track of the number of wins
 # and make tries variable to setup how many times the user can guess before failing
+# and also make a boolean to know if the game should keep running or not
 wins = 0
 tries = 5
+continueGame = True
 
 # List of 50 words
 words = ['drill', 'attract', 'cupboard', 'slant', 'keep', 'white', 'alarm', 'push', 'cross', 'comfort', 'deprive', 'dressing', 'survival', 'wheel', 'stain',\
@@ -22,11 +24,11 @@ def pLine(text, waitTime = 0.03, newLine = True):
     if newLine:
         print('')
 
-def blankify(word, guess = ''):
+def blankify(word):
     wordList = list(word)
 
     for i in range(len(wordList)):
-        wordList[i]
+        wordList[i] = '_'
 
     blankWord = ''.join(wordList)
 
@@ -61,38 +63,57 @@ def checkGuess(guess, word, guessed):
         return 1
     else:
         return 2
+    
+def fillWord(word, guess, blankWord):
+    wordList = list(word)
+    blankList = list(blankWord)
+    indices = []
+
+    for i,v in enumerate(wordList):
+        if v == guess:
+            indices.append(i)
+
+    for index in indices:
+        blankList[index] = guess
+
+    blankWord = ''.join(blankList)
+    return blankWord
 
 # Clear screen
 system('cls')
 
 # Welcoming the user and then giving them options to add more words to the pool if they have more than 1 wins
 
-# Greet the user
-pLine('Hello, welcome to my Hangman Game!')
-print('')
-pLine(f'Your wins: {wins} wins')
-print('')
+# Menu
+def menu():
+    pLine('Hello, welcome to my Hangman Game!')
+    print('')
+    pLine(f'Your wins: {wins} wins')
+    print('')
 
-pLine('Please choose one of the following options by typing in the appropriate number')
-pLine('1. Play', 0.05)
-sleep(0.1)
-pLine(f'2. Add word to word pool (currently at {len(words)} words) - Locked to 1 win')
+    pLine('Please choose one of the following options by typing in the appropriate number')
+    pLine('1. Play', 0.05)
+    sleep(0.1)
+    pLine(f'2. Add word to word pool (currently at {len(words)} words) - Locked to 1 win')
 
-while True:
-    try:
-        userChoice = int(input('Choice: '))
-    except ValueError:
-        pLine('Please input an integer! (Positive whole number)')
-        continue
+    while True:
+        try:
+            userChoice = int(input('Choice: '))
+        except ValueError:
+            pLine('Please input an integer! (Positive whole number)')
+            continue
 
-    if userChoice > 3 or userChoice < 1:
-        pLine('That is not a valid option!')
-        continue
-    elif userChoice == 2 and wins < 1:
-        pLine('You do not have enough wins to add a word to the pool!')
-        continue
+        if userChoice > 3 or userChoice < 1:
+            pLine('That is not a valid option!')
+            continue
+        elif userChoice == 2 and wins < 1:
+            pLine('You do not have enough wins to add a word to the pool!')
+            continue
+        elif userChoice == 3:
+            pLine('Goodbye!')
+            continueGame = False
 
-    break
+        break
 
 # Setup game
 system('cls')
@@ -113,7 +134,6 @@ while True:
     pLine(f'You have {tries} tries left')
     print('')
 
-    print(blankify(word))
     pLine(visibleWord)
     print('')
 
@@ -121,7 +141,7 @@ while True:
 
     if guess == 'quit':
         pLine('Goodbye!')
-        break
+        continueGame = False
     print('')
     
     guessValid = checkGuess(guess, word, guessed)
@@ -140,4 +160,4 @@ while True:
 
     system('cls')
 
-    
+    visibleWord = fillWord(word, guess, visibleWord)
