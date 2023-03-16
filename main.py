@@ -2,11 +2,13 @@ from os import system
 from time import sleep
 from random import choice
 
+#TODO: Show user guessed letters
+#TODO: Let user edit word bank
+
 # Setup wins variable to keep track of the number of wins
 # and make tries variable to setup how many times the user can guess before failing
 # and also make a boolean to know if the game should keep running or not
 wins = 0
-tries = 5
 continueGame = True
 
 # List of 50 words
@@ -39,7 +41,7 @@ def getGuess():
         guess = input('Guess a letter: ')
 
         if guess == 'quit':
-            pass
+            break
         elif len(guess) > 1 or len(guess) < 1:
             pLine('Must be exactly one character!', 0.05)
             continue
@@ -79,6 +81,17 @@ def fillWord(word, guess, blankWord):
     blankWord = ''.join(blankList)
     return blankWord
 
+def checkWord(visibleWord):
+
+    letters = []
+
+    for letter in visibleWord:
+        letters.append(letter)
+
+    if '_' in letters:
+        return False
+    return True
+
 # Clear screen
 system('cls')
 
@@ -86,6 +99,7 @@ system('cls')
 
 # Menu
 def menu():
+    global wins, continueGame
     pLine('Hello, welcome to my Hangman Game!')
     print('')
     pLine(f'Your wins: {wins} wins')
@@ -95,6 +109,8 @@ def menu():
     pLine('1. Play', 0.05)
     sleep(0.1)
     pLine(f'2. Add word to word pool (currently at {len(words)} words) - Locked to 1 win')
+    sleep(0.1)
+    pLine('3. Quit')
 
     while True:
         try:
@@ -111,53 +127,84 @@ def menu():
             continue
         elif userChoice == 3:
             pLine('Goodbye!')
+            sleep(0.5)
+            system('cls')
             continueGame = False
 
         break
 
-# Setup game
-system('cls')
-sleep(1)
-
-# Get a new word
-word = choice(words)
-word = 'hello'
-
-# Setup letters user has already picked
-guessed = []
-
-visibleWord = blankify(word)
-
 # Ask user for guesses
-while True:
-    pLine('Enter "quit" to exit the program')
-    pLine(f'You have {tries} tries left')
-    print('')
-
-    pLine(visibleWord)
-    print('')
-
-    guess = getGuess()
-
-    if guess == 'quit':
-        pLine('Goodbye!')
-        continueGame = False
-    print('')
+def gameLoop():
     
-    guessValid = checkGuess(guess, word, guessed)
+    # setup
+    global wins, continueGame
 
-    if guessValid == 1:
-        pLine('That letter is in the word!')
-    elif guessValid == 2:
-        pLine('That letter is not in the word!')
-        tries -= 1
-    else:
-        pLine('You cannot guess the same letter twice!')
-
-    guessed.append(guess)
-
+    # Setup game
+    system('cls')
     sleep(1)
 
-    system('cls')
+    # Get a new word
+    word = choice(words)
+    visibleWord = blankify(word)
+    tries = len(word) + 1
 
-    visibleWord = fillWord(word, guess, visibleWord)
+    # Setup letters user has already picked
+    guessed = []
+
+    while True:
+
+        if tries < 1:
+            pLine('You ran out of tries!')
+            pLine(f'The word was: {word}')
+            sleep(0.5)
+            system('cls')
+            break
+
+        pLine('Enter "quit" to exit the program')
+        pLine(f'You have {tries} tries left')
+        print('')
+
+        pLine(visibleWord)
+        print('')
+
+        # Check if there are still hidden letters
+        wonGame = checkWord(visibleWord)
+        if wonGame:
+            pLine('Congratulations, you have won!')
+            sleep(1)
+            wins += 1
+            system('cls')
+            break
+
+        guess = getGuess()
+
+        if guess == 'quit':
+            pLine('Goodbye!')
+            system('cls')
+            break
+        print('')
+        
+        guessValid = checkGuess(guess, word, guessed)
+
+        if guessValid == 1:
+            pLine('That letter is in the word!')
+        elif guessValid == 2:
+            pLine('That letter is not in the word!')
+            tries -= 1
+        else:
+            pLine('You cannot guess the same letter twice!')
+
+        guessed.append(guess)
+
+        sleep(1)
+
+        system('cls')
+
+        visibleWord = fillWord(word, guess, visibleWord)
+
+# Main loop to run the game loop while the game should be continued
+while True:
+    menu()
+    if continueGame == False:
+            break
+    gameLoop()
