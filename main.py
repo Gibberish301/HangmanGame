@@ -2,8 +2,6 @@ from os import system
 from time import sleep
 from random import choice
 
-#TODO: Let user edit word bank
-
 # Setup wins variable to keep track of the number of wins
 # and make tries variable to setup how many times the user can guess before failing
 # and also make a boolean to know if the game should keep running or not
@@ -45,7 +43,7 @@ def getGuess():
             pLine('Must be exactly one character!', 0.05)
             continue
         try:
-            if int(guess):
+            if float(guess):
                 pLine('Guess cannot be a number!', 0.05)
                 continue
         except ValueError:
@@ -100,38 +98,104 @@ def guessedLetters(guessed):
 
     return string
 
+def editWordPool():
+    global words
+
+    while True:
+        # Menu
+        pLine('Welcome to the word pool editor!')
+        pLine('Please select one of the following options:')
+        print('')
+
+        pLine('Current word pool:')
+        pLine(f'{words}', 0.001)
+        print('')
+        
+        pLine('1. Add word to word pool')
+        pLine('2. Delete word from word pool')
+        pLine('3. Exit')
+
+        while True:
+            try:
+                userChoice = float(input('Choice: '))
+            except ValueError:
+                pLine('Please input an integer! (Positive whole number)')
+                continue
+            break
+
+        # Let the user add words to the word pool
+        if userChoice == 1:
+            add = input('Word to add to the word pool: ')
+            try:
+                float(add)
+                pLine('The word cannot be a number!')
+            except ValueError:
+                if len(add) < 2:
+                    pLine('Word cannot be less than or equal to 1 character!')
+                elif add in words:
+                    pLine('That word is already in the word pool!')
+                else:
+                    words.append(add)
+                    pLine(f'Word {add} has been added to the word pool')
+            sleep(0.5)
+            system('cls')
+
+        # Let the user remove words from the word pool if it is in it
+        elif userChoice == 2:
+            remove = input('Word to delete from the word pool: ')
+            try:
+                words.remove(remove)
+            except ValueError:
+                pLine('That is not a word in the word pool!')
+
+            sleep(0.5)
+            system('cls')
+
+        elif userChoice == 3:
+            break
+
 # Clear screen
 system('cls')
 
-# Welcoming the user and then giving them options to add more words to the pool if they have more than 1 wins
+# Welcoming the user and then giving them options to add more words to the pool if they have more than 1 win
 
 # Menu
 def menu():
     global wins, continueGame
-    pLine('Hello, welcome to my Hangman Game!')
-    print('')
-    pLine(f'Your wins: {wins} wins')
-    print('')
-
-    pLine('Please choose one of the following options by typing in the appropriate number')
-    pLine('1. Play', 0.05)
-    sleep(0.1)
-    pLine(f'2. Edit word pool (currently at {len(words)} words) - Locked to 1 win')
-    sleep(0.1)
-    pLine('3. Quit')
-
     while True:
+        pLine('Hello, welcome to my Hangman Game!')
+        print('')
+        pLine(f'Your wins: {wins} wins')
+        print('')
+
+        pLine('Please choose one of the following options by typing in the appropriate number')
+        pLine('1. Play', 0.05)
+        sleep(0.1)
+        pLine(f'2. Edit word pool (currently at {len(words)} words) - Locked to 1 win')
+        sleep(0.1)
+        pLine('3. Quit')
+
         try:
             userChoice = int(input('Choice: '))
         except ValueError:
             pLine('Please input an integer! (Positive whole number)')
+            sleep(0.5)
+            system('cls')
             continue
-
         if userChoice > 3 or userChoice < 1:
             pLine('That is not a valid option!')
+            sleep(0.5)
+            system('cls')
             continue
         elif userChoice == 2 and wins < 1:
-            pLine('You do not have enough wins to add a word to the pool!')
+            pLine('You do not have enough wins to edit the word pool!')
+            sleep(0.5)
+            system('cls')
+            continue
+        elif userChoice == 2 and wins > 0:
+            system('cls')            
+            editWordPool()
+            system('cls')
             continue
         elif userChoice == 3:
             pLine('Goodbye!')
