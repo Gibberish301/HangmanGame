@@ -2,7 +2,6 @@ from os import system
 from time import sleep
 from random import choice
 
-#TODO: Show user guessed letters
 #TODO: Let user edit word bank
 
 # Setup wins variable to keep track of the number of wins
@@ -92,6 +91,15 @@ def checkWord(visibleWord):
         return False
     return True
 
+def guessedLetters(guessed):
+    # String is the letters guessed
+    string = ''
+
+    for letter in guessed:
+        string += f'{letter}, '
+
+    return string
+
 # Clear screen
 system('cls')
 
@@ -108,7 +116,7 @@ def menu():
     pLine('Please choose one of the following options by typing in the appropriate number')
     pLine('1. Play', 0.05)
     sleep(0.1)
-    pLine(f'2. Add word to word pool (currently at {len(words)} words) - Locked to 1 win')
+    pLine(f'2. Edit word pool (currently at {len(words)} words) - Locked to 1 win')
     sleep(0.1)
     pLine('3. Quit')
 
@@ -165,6 +173,10 @@ def gameLoop():
         print('')
 
         pLine(visibleWord)
+        print('')
+
+        lettersGuessed = guessedLetters(guessed)
+        pLine(f'Letters guessed: {lettersGuessed}')
         print('')
 
         # Check if there are still hidden letters
